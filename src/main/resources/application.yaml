@@ -1,0 +1,15 @@
+server:
+  port: 4326
+
+info:
+  app:
+    name: ${project.name}
+    version: ${project.version}
+
+spring:
+  problemdetails:
+    enabled: true
+
+external-services:
+  cortex:
+    url: http://localhost:1337/v1/

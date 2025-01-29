@@ -1,0 +1,41 @@
+services:
+
+  builder:
+    image: llm-adapter:builder
+    container_name: llm-adapter-builder
+    build:
+      context: .
+      dockerfile: build.Dockerfile
+    volumes:
+      - build-cache:/root/.gradle/caches/
+      - ./build:/app/build
+    environment:
+      - NVD_API_KEY=${NVD_API_KEY}
+
+  app:
+    image: llm-adapter:${TAG-latest}
+    container_name: llm-adapter
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4326:4326"
+
+  llm:
+    image: menloltd/cortex:latest
+    container_name: cortex
+    volumes:
+      - cortex_data:/root/cortexcpp
+    ports:
+      - "39281:39281"
+
+  docker-scan:
+    image: aquasec/trivy:latest
+    container_name: docker-scan
+    volumes:
+      - ./tmp:/tmp
+      - .:/results
+
+volumes:
+  build-cache:
+    name: build-cache
